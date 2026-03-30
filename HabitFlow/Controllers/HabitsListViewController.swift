@@ -63,9 +63,11 @@ extension HabitsListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: HabitTableCellView.reuseIdentifier, for: indexPath) as! HabitTableCellView
         let habit = habitsMock[indexPath.row]
-        
+        cell.onTapComplete = { [weak self] in
+            self?.habitsMock[indexPath.row].completedToday.toggle()
+            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
         cell.configure(with: habit)
-        
         return cell
     }
     

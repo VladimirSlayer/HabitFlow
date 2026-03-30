@@ -70,6 +70,9 @@ final class CreateHabitViewController: UIViewController {
     
     @objc private func saveTapped() {
         guard let name = nameTextField.text, !name.isEmpty else {
+            let alert = UIAlertController(title: "Error", message: "No text in name field", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true, completion: nil)
             return
         }
         
