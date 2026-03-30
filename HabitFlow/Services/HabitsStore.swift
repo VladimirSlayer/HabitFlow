@@ -41,6 +41,10 @@ final class HabitsStore {
         habits.append(habit)
     }
 
+    func habit(id: UUID) -> HabitModel? {
+        habits.first(where: { $0.id == id })
+    }
+
     func toggleHabitCompletion(id: UUID) {
         guard let index = habits.firstIndex(where: { $0.id == id }) else { return }
         habits[index].completedToday.toggle()

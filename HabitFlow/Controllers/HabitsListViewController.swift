@@ -100,6 +100,12 @@ final class HabitsListViewController: UIViewController {
         ])
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        collectionView.reloadData()
+        syncCollectionHeight()
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         syncCollectionHeight()
@@ -175,7 +181,7 @@ extension HabitsListViewController: UICollectionViewDataSource, UICollectionView
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let habit = store.habits[indexPath.item]
-        let habitVC = HabitDetailViewController(selectedHabit: habit)
+        let habitVC = HabitDetailViewController(store: store, habitID: habit.id)
         navigationController?.pushViewController(habitVC, animated: true)
     }
 }
