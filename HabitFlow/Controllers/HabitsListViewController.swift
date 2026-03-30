@@ -6,7 +6,8 @@ final class HabitsListViewController: UIViewController {
     private let scrollView: UIScrollView = {
         let s = UIScrollView()
         s.alwaysBounceVertical = true
-        s.showsVerticalScrollIndicator = true
+        s.contentInset.bottom = AppAppearance.tabBarBottomInset
+        s.verticalScrollIndicatorInsets.bottom = AppAppearance.tabBarBottomInset
         return s
     }()
 
@@ -15,17 +16,24 @@ final class HabitsListViewController: UIViewController {
     private let titleLabel: UILabel = {
         let l = UILabel()
         l.text = "Habits"
-        l.font = .systemFont(ofSize: 34, weight: .bold)
+        l.font = .systemFont(ofSize: 32, weight: .bold)
         l.textColor = AppAppearance.primaryText
-        l.numberOfLines = 1
+        return l
+    }()
+
+    private let subtitleLabel: UILabel = {
+        let l = UILabel()
+        l.text = "Your daily flow."
+        l.font = .systemFont(ofSize: 15, weight: .medium)
+        l.textColor = AppAppearance.secondaryText
         return l
     }()
 
     private lazy var addButton: UIButton = {
         let b = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 28, weight: .medium)
+        let config = UIImage.SymbolConfiguration(pointSize: 26, weight: .medium)
         b.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: config), for: .normal)
-        b.tintColor = AppAppearance.habitAccent(hex: "#6B5B4F")
+        b.tintColor = AppAppearance.accent
         b.addTarget(self, action: #selector(didTapAdd), for: .touchUpInside)
         return b
     }()
@@ -48,6 +56,17 @@ final class HabitsListViewController: UIViewController {
         return cv
     }()
 
+    private let emptyLabel: UILabel = {
+        let l = UILabel()
+        l.text = "Tap + to create your first habit"
+        l.font = .systemFont(ofSize: 16, weight: .medium)
+        l.textColor = AppAppearance.secondaryText
+        l.textAlignment = .center
+        l.numberOfLines = 0
+        l.isHidden = true
+        return l
+    }()
+
     private var collectionHeightConstraint: NSLayoutConstraint?
 
     init(store: HabitsStore) {
@@ -66,21 +85,25 @@ final class HabitsListViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(headerRow)
+        contentView.addSubview(subtitleLabel)
         contentView.addSubview(collectionView)
+        contentView.addSubview(emptyLabel)
 
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         headerRow.translatesAutoresizingMaskIntoConstraints = false
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        emptyLabel.translatesAutoresizingMaskIntoConstraints = false
 
         let collectionHeight = collectionView.heightAnchor.constraint(equalToConstant: 400)
         collectionHeightConstraint = collectionHeight
 
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
@@ -88,15 +111,23 @@ final class HabitsListViewController: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            headerRow.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            headerRow.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 8),
             headerRow.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: AppAppearance.screenPadding),
             headerRow.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -AppAppearance.screenPadding),
 
-            collectionView.topAnchor.constraint(equalTo: headerRow.bottomAnchor, constant: 20),
+            subtitleLabel.topAnchor.constraint(equalTo: headerRow.bottomAnchor, constant: 4),
+            subtitleLabel.leadingAnchor.constraint(equalTo: headerRow.leadingAnchor),
+            subtitleLabel.trailingAnchor.constraint(equalTo: headerRow.trailingAnchor),
+
+            collectionView.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
             collectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
-            collectionHeight
+            collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            collectionHeight,
+
+            emptyLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 60),
+            emptyLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 40),
+            emptyLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40)
         ])
     }
 
@@ -104,6 +135,7 @@ final class HabitsListViewController: UIViewController {
         super.viewWillAppear(animated)
         collectionView.reloadData()
         syncCollectionHeight()
+        updateEmptyState()
     }
 
     override func viewDidLayoutSubviews() {
@@ -118,9 +150,15 @@ final class HabitsListViewController: UIViewController {
         view.layoutIfNeeded()
     }
 
+    private func updateEmptyState() {
+        let isEmpty = store.habits.isEmpty
+        emptyLabel.isHidden = !isEmpty
+        collectionView.isHidden = isEmpty
+    }
+
     private static func makeLayout() -> UICollectionViewCompositionalLayout {
         let spacing = AppAppearance.gridSpacing
-        let rowHeight: CGFloat = 158
+        let rowHeight: CGFloat = 148
 
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(0.5),
@@ -143,9 +181,9 @@ final class HabitsListViewController: UIViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(
             top: 0,
-            leading: 16 - spacing / 2,
+            leading: AppAppearance.screenPadding - spacing / 2,
             bottom: 8,
-            trailing: 16 - spacing / 2
+            trailing: AppAppearance.screenPadding - spacing / 2
         )
 
         return UICollectionViewCompositionalLayout(section: section)
@@ -157,6 +195,7 @@ final class HabitsListViewController: UIViewController {
             self?.store.addHabit(newHabit)
             self?.collectionView.reloadData()
             self?.syncCollectionHeight()
+            self?.updateEmptyState()
         }
         navigationController?.pushViewController(createHabitVC, animated: true)
     }

@@ -6,6 +6,8 @@ final class AnalyticsViewController: UIViewController {
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         view.alwaysBounceVertical = true
+        view.contentInset.bottom = AppAppearance.tabBarBottomInset
+        view.verticalScrollIndicatorInsets.bottom = AppAppearance.tabBarBottomInset
         return view
     }()
 
@@ -14,7 +16,7 @@ final class AnalyticsViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Analytics"
-        label.font = .systemFont(ofSize: 34, weight: .bold)
+        label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textColor = AppAppearance.primaryText
         return label
     }()
@@ -22,7 +24,7 @@ final class AnalyticsViewController: UIViewController {
     private let subtitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Track your rhythm and daily consistency."
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = .systemFont(ofSize: 15, weight: .medium)
         label.textColor = AppAppearance.secondaryText
         label.numberOfLines = 0
         return label
@@ -30,13 +32,13 @@ final class AnalyticsViewController: UIViewController {
 
     private let summaryCard = AnalyticsCardView(
         title: "Today",
-        value: "3 / 5",
+        value: "0 / 0",
         caption: "habits completed"
     )
 
     private let streakCard = AnalyticsCardView(
         title: "Best streak",
-        value: "7 days",
+        value: "0 days",
         caption: "keep your momentum"
     )
 
@@ -67,14 +69,14 @@ final class AnalyticsViewController: UIViewController {
     private let focusTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Daily focus"
-        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
         label.textColor = AppAppearance.secondaryText
         return label
     }()
 
     private let focusValueLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = .systemFont(ofSize: 22, weight: .bold)
         label.textColor = AppAppearance.primaryText
         label.numberOfLines = 0
         return label
@@ -83,31 +85,47 @@ final class AnalyticsViewController: UIViewController {
     private let progressTrackView: UIView = {
         let view = UIView()
         view.backgroundColor = AppAppearance.background
-        view.layer.cornerRadius = 7
+        view.layer.cornerRadius = 5
         view.layer.cornerCurve = .continuous
         return view
     }()
 
     private let progressFillView: UIView = {
         let view = UIView()
-        view.backgroundColor = AppAppearance.habitAccent(hex: "#7C6455")
-        view.layer.cornerRadius = 7
+        view.backgroundColor = AppAppearance.accent
+        view.layer.cornerRadius = 5
         view.layer.cornerCurve = .continuous
         return view
     }()
 
     private let focusCaptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.font = .systemFont(ofSize: 14, weight: .medium)
         label.textColor = AppAppearance.secondaryText
         label.numberOfLines = 0
         return label
     }()
 
+    private lazy var topRow: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [summaryCard, streakCard])
+        stack.axis = .horizontal
+        stack.spacing = 12
+        stack.distribution = .fillEqually
+        return stack
+    }()
+
+    private lazy var bottomRow: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [progressCard, pendingCard])
+        stack.axis = .horizontal
+        stack.spacing = 12
+        stack.distribution = .fillEqually
+        return stack
+    }()
+
     private lazy var cardsStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [summaryCard, streakCard, progressCard, pendingCard, focusCard])
+        let stack = UIStackView(arrangedSubviews: [topRow, bottomRow, focusCard])
         stack.axis = .vertical
-        stack.spacing = 16
+        stack.spacing = 12
         return stack
     }()
 
@@ -152,10 +170,10 @@ final class AnalyticsViewController: UIViewController {
         self.progressFillWidthConstraint = progressFillWidthConstraint
 
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
@@ -163,41 +181,41 @@ final class AnalyticsViewController: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            titleLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: AppAppearance.screenPadding),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -AppAppearance.screenPadding),
 
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
             subtitleLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
-            cardsStack.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 24),
+            cardsStack.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
             cardsStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             cardsStack.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
-            cardsStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
+            cardsStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
 
-            focusTitleLabel.topAnchor.constraint(equalTo: focusCard.topAnchor, constant: 18),
-            focusTitleLabel.leadingAnchor.constraint(equalTo: focusCard.leadingAnchor, constant: 18),
-            focusTitleLabel.trailingAnchor.constraint(equalTo: focusCard.trailingAnchor, constant: -18),
+            focusTitleLabel.topAnchor.constraint(equalTo: focusCard.topAnchor, constant: 16),
+            focusTitleLabel.leadingAnchor.constraint(equalTo: focusCard.leadingAnchor, constant: 16),
+            focusTitleLabel.trailingAnchor.constraint(equalTo: focusCard.trailingAnchor, constant: -16),
 
-            focusValueLabel.topAnchor.constraint(equalTo: focusTitleLabel.bottomAnchor, constant: 8),
+            focusValueLabel.topAnchor.constraint(equalTo: focusTitleLabel.bottomAnchor, constant: 6),
             focusValueLabel.leadingAnchor.constraint(equalTo: focusTitleLabel.leadingAnchor),
             focusValueLabel.trailingAnchor.constraint(equalTo: focusTitleLabel.trailingAnchor),
 
-            progressTrackView.topAnchor.constraint(equalTo: focusValueLabel.bottomAnchor, constant: 16),
+            progressTrackView.topAnchor.constraint(equalTo: focusValueLabel.bottomAnchor, constant: 14),
             progressTrackView.leadingAnchor.constraint(equalTo: focusTitleLabel.leadingAnchor),
             progressTrackView.trailingAnchor.constraint(equalTo: focusTitleLabel.trailingAnchor),
-            progressTrackView.heightAnchor.constraint(equalToConstant: 14),
+            progressTrackView.heightAnchor.constraint(equalToConstant: 10),
 
             progressFillView.topAnchor.constraint(equalTo: progressTrackView.topAnchor),
             progressFillView.leadingAnchor.constraint(equalTo: progressTrackView.leadingAnchor),
             progressFillView.bottomAnchor.constraint(equalTo: progressTrackView.bottomAnchor),
             progressFillWidthConstraint,
 
-            focusCaptionLabel.topAnchor.constraint(equalTo: progressTrackView.bottomAnchor, constant: 14),
+            focusCaptionLabel.topAnchor.constraint(equalTo: progressTrackView.bottomAnchor, constant: 12),
             focusCaptionLabel.leadingAnchor.constraint(equalTo: focusTitleLabel.leadingAnchor),
             focusCaptionLabel.trailingAnchor.constraint(equalTo: focusTitleLabel.trailingAnchor),
-            focusCaptionLabel.bottomAnchor.constraint(equalTo: focusCard.bottomAnchor, constant: -18)
+            focusCaptionLabel.bottomAnchor.constraint(equalTo: focusCard.bottomAnchor, constant: -16)
         ])
 
         NotificationCenter.default.addObserver(

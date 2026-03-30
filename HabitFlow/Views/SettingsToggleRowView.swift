@@ -11,20 +11,20 @@ final class SettingsToggleRowView: UIView {
         super.init(frame: .zero)
 
         titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+        titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         titleLabel.textColor = AppAppearance.primaryText
 
         subtitleLabel.text = subtitle
-        subtitleLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        subtitleLabel.font = .systemFont(ofSize: 13, weight: .medium)
         subtitleLabel.textColor = AppAppearance.secondaryText
         subtitleLabel.numberOfLines = 0
 
-        toggleSwitch.onTintColor = AppAppearance.habitAccent(hex: "#7C6455")
+        toggleSwitch.onTintColor = AppAppearance.accent
         toggleSwitch.addTarget(self, action: #selector(handleSwitchValueChanged(_:)), for: .valueChanged)
 
         let labelsStack = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         labelsStack.axis = .vertical
-        labelsStack.spacing = 4
+        labelsStack.spacing = 2
 
         addSubview(labelsStack)
         addSubview(toggleSwitch)
@@ -33,9 +33,9 @@ final class SettingsToggleRowView: UIView {
         toggleSwitch.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             labelsStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            labelsStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+            labelsStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
 
             toggleSwitch.leadingAnchor.constraint(greaterThanOrEqualTo: labelsStack.trailingAnchor, constant: 12),
             toggleSwitch.trailingAnchor.constraint(equalTo: trailingAnchor),

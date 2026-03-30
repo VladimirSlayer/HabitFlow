@@ -2,6 +2,7 @@ import UIKit
 
 final class FloatingTabBarController: UIViewController {
     private let store = HabitsStore()
+    static let tabBarTotalHeight: CGFloat = 96
 
     private enum Tab: Int, CaseIterable {
         case habits
@@ -10,49 +11,49 @@ final class FloatingTabBarController: UIViewController {
 
         var title: String {
             switch self {
-            case .habits:
-                return "Habits"
-            case .analytics:
-                return "Analytics"
-            case .settings:
-                return "Settings"
+            case .habits: return "Habits"
+            case .analytics: return "Analytics"
+            case .settings: return "Settings"
             }
         }
 
         var imageName: String {
             switch self {
-            case .habits:
-                return "square.grid.2x2"
-            case .analytics:
-                return "chart.bar"
-            case .settings:
-                return "gearshape"
+            case .habits: return "square.grid.2x2"
+            case .analytics: return "chart.bar"
+            case .settings: return "gearshape"
             }
         }
 
         var selectedImageName: String {
             switch self {
-            case .habits:
-                return "square.grid.2x2.fill"
-            case .analytics:
-                return "chart.bar.fill"
-            case .settings:
-                return "gearshape.fill"
+            case .habits: return "square.grid.2x2.fill"
+            case .analytics: return "chart.bar.fill"
+            case .settings: return "gearshape.fill"
             }
         }
     }
 
     private let contentContainer = UIView()
 
+    private let blurBackground: UIVisualEffectView = {
+        let blur = UIBlurEffect(style: .systemUltraThinMaterial)
+        let view = UIVisualEffectView(effect: blur)
+        view.layer.cornerRadius = 28
+        view.layer.cornerCurve = .continuous
+        view.clipsToBounds = true
+        return view
+    }()
+
     private let floatingBar: UIView = {
         let view = UIView()
-        view.backgroundColor = AppAppearance.cardSurface.withAlphaComponent(0.96)
-        view.layer.cornerRadius = 30
+        view.backgroundColor = AppAppearance.cardSurface.withAlphaComponent(0.7)
+        view.layer.cornerRadius = 28
         view.layer.cornerCurve = .continuous
         view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.12
-        view.layer.shadowRadius = 18
-        view.layer.shadowOffset = CGSize(width: 0, height: 10)
+        view.layer.shadowOpacity = 0.10
+        view.layer.shadowRadius = 24
+        view.layer.shadowOffset = CGSize(width: 0, height: 8)
         return view
     }()
 
@@ -71,14 +72,11 @@ final class FloatingTabBarController: UIViewController {
         return itemView
     }
 
-    private lazy var controllers: [UINavigationController] = {
-        let bottomInset: CGFloat = 108
-        return [
-            makeNavigationController(rootViewController: HabitsListViewController(store: store), bottomInset: bottomInset),
-            makeNavigationController(rootViewController: AnalyticsViewController(store: store), bottomInset: bottomInset),
-            makeNavigationController(rootViewController: SettingsViewController(), bottomInset: bottomInset)
-        ]
-    }()
+    private lazy var controllers: [UINavigationController] = [
+        makeNavigationController(rootViewController: HabitsListViewController(store: store)),
+        makeNavigationController(rootViewController: AnalyticsViewController(store: store)),
+        makeNavigationController(rootViewController: SettingsViewController())
+    ]
 
     private var selectedTab: Tab = .habits
     private var selectedController: UIViewController?
@@ -88,10 +86,12 @@ final class FloatingTabBarController: UIViewController {
         view.backgroundColor = AppAppearance.background
 
         view.addSubview(contentContainer)
+        view.addSubview(blurBackground)
         view.addSubview(floatingBar)
         floatingBar.addSubview(buttonStack)
 
         contentContainer.translatesAutoresizingMaskIntoConstraints = false
+        blurBackground.translatesAutoresizingMaskIntoConstraints = false
         floatingBar.translatesAutoresizingMaskIntoConstraints = false
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
 
@@ -101,15 +101,20 @@ final class FloatingTabBarController: UIViewController {
             contentContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             contentContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            floatingBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            floatingBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            floatingBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12),
-            floatingBar.heightAnchor.constraint(equalToConstant: 72),
+            blurBackground.leadingAnchor.constraint(equalTo: floatingBar.leadingAnchor),
+            blurBackground.trailingAnchor.constraint(equalTo: floatingBar.trailingAnchor),
+            blurBackground.topAnchor.constraint(equalTo: floatingBar.topAnchor),
+            blurBackground.bottomAnchor.constraint(equalTo: floatingBar.bottomAnchor),
 
-            buttonStack.topAnchor.constraint(equalTo: floatingBar.topAnchor, constant: 8),
-            buttonStack.leadingAnchor.constraint(equalTo: floatingBar.leadingAnchor, constant: 8),
-            buttonStack.trailingAnchor.constraint(equalTo: floatingBar.trailingAnchor, constant: -8),
-            buttonStack.bottomAnchor.constraint(equalTo: floatingBar.bottomAnchor, constant: -8)
+            floatingBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            floatingBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            floatingBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
+            floatingBar.heightAnchor.constraint(equalToConstant: 64),
+
+            buttonStack.topAnchor.constraint(equalTo: floatingBar.topAnchor, constant: 6),
+            buttonStack.leadingAnchor.constraint(equalTo: floatingBar.leadingAnchor, constant: 6),
+            buttonStack.trailingAnchor.constraint(equalTo: floatingBar.trailingAnchor, constant: -6),
+            buttonStack.bottomAnchor.constraint(equalTo: floatingBar.bottomAnchor, constant: -6)
         ])
 
         updateSelection(for: .habits)
@@ -117,6 +122,7 @@ final class FloatingTabBarController: UIViewController {
 
     @objc private func selectTabFromView(_ sender: FloatingTabBarItemView) {
         guard let tab = Tab(rawValue: sender.tag) else { return }
+        guard tab != selectedTab else { return }
         updateSelection(for: tab)
     }
 
@@ -137,54 +143,54 @@ final class FloatingTabBarController: UIViewController {
         selectedController = controller
         selectedTab = tab
 
-        for currentTab in Tab.allCases {
-            let button = tabViews[currentTab.rawValue]
-            let isSelected = currentTab == tab
-            button.configure(
-                title: currentTab.title,
-                imageName: isSelected ? currentTab.selectedImageName : currentTab.imageName,
-                isSelected: isSelected
-            )
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut) {
+            for currentTab in Tab.allCases {
+                let button = self.tabViews[currentTab.rawValue]
+                let isSelected = currentTab == tab
+                button.configure(
+                    title: currentTab.title,
+                    imageName: isSelected ? currentTab.selectedImageName : currentTab.imageName,
+                    isSelected: isSelected
+                )
+            }
         }
     }
 
-    private func makeNavigationController(rootViewController: UIViewController, bottomInset: CGFloat) -> UINavigationController {
-        let navigationController = UINavigationController(rootViewController: rootViewController)
-        navigationController.setNavigationBarHidden(true, animated: false)
-        navigationController.additionalSafeAreaInsets.bottom = bottomInset
-        return navigationController
+    private func makeNavigationController(rootViewController: UIViewController) -> UINavigationController {
+        let nav = UINavigationController(rootViewController: rootViewController)
+        nav.setNavigationBarHidden(true, animated: false)
+        return nav
     }
 }
 
 private final class FloatingTabBarItemView: UIControl {
-
     private let iconView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = AppAppearance.secondaryText
-        return imageView
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFit
+        iv.tintColor = AppAppearance.secondaryText
+        return iv
     }()
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.font = .systemFont(ofSize: 11, weight: .semibold)
         label.textAlignment = .center
         label.textColor = AppAppearance.secondaryText
         return label
     }()
 
     private lazy var stack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [iconView, titleLabel])
-        stack.axis = .vertical
-        stack.alignment = .center
-        stack.spacing = 4
-        stack.isUserInteractionEnabled = false
-        return stack
+        let s = UIStackView(arrangedSubviews: [iconView, titleLabel])
+        s.axis = .vertical
+        s.alignment = .center
+        s.spacing = 2
+        s.isUserInteractionEnabled = false
+        return s
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        layer.cornerRadius = 22
+        layer.cornerRadius = 20
         layer.cornerCurve = .continuous
 
         addSubview(stack)
@@ -194,8 +200,8 @@ private final class FloatingTabBarItemView: UIControl {
         NSLayoutConstraint.activate([
             stack.centerXAnchor.constraint(equalTo: centerXAnchor),
             stack.centerYAnchor.constraint(equalTo: centerYAnchor),
-            iconView.heightAnchor.constraint(equalToConstant: 18),
-            iconView.widthAnchor.constraint(equalToConstant: 18)
+            iconView.heightAnchor.constraint(equalToConstant: 20),
+            iconView.widthAnchor.constraint(equalToConstant: 20)
         ])
     }
 
@@ -206,9 +212,10 @@ private final class FloatingTabBarItemView: UIControl {
     func configure(title: String, imageName: String, isSelected: Bool) {
         titleLabel.text = title
         iconView.image = UIImage(systemName: imageName)
-        let tint = isSelected ? AppAppearance.primaryText : AppAppearance.secondaryText
+        let tint = isSelected ? AppAppearance.primaryText : AppAppearance.secondaryText.withAlphaComponent(0.65)
         titleLabel.textColor = tint
         iconView.tintColor = tint
-        backgroundColor = isSelected ? AppAppearance.background.withAlphaComponent(0.95) : .clear
+        backgroundColor = isSelected ? AppAppearance.background.withAlphaComponent(0.85) : .clear
+        transform = isSelected ? CGAffineTransform(scaleX: 1.05, y: 1.05) : .identity
     }
 }
