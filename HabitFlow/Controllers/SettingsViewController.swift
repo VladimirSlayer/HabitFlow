@@ -6,6 +6,8 @@ final class SettingsViewController: UIViewController {
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
         view.alwaysBounceVertical = true
+        view.contentInset.bottom = AppAppearance.tabBarBottomInset
+        view.verticalScrollIndicatorInsets.bottom = AppAppearance.tabBarBottomInset
         return view
     }()
 
@@ -14,7 +16,7 @@ final class SettingsViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Settings"
-        label.font = .systemFont(ofSize: 34, weight: .bold)
+        label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textColor = AppAppearance.primaryText
         return label
     }()
@@ -22,7 +24,7 @@ final class SettingsViewController: UIViewController {
     private let subtitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Fine tune your cozy routine space."
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = .systemFont(ofSize: 15, weight: .medium)
         label.textColor = AppAppearance.secondaryText
         label.numberOfLines = 0
         return label
@@ -30,7 +32,7 @@ final class SettingsViewController: UIViewController {
 
     private let heroCard: UIView = {
         let view = UIView()
-        view.backgroundColor = AppAppearance.cardSurface
+        view.backgroundColor = AppAppearance.accent
         view.layer.cornerRadius = AppAppearance.cardCornerRadius
         view.layer.cornerCurve = .continuous
         view.layer.shadowColor = UIColor.black.cgColor
@@ -43,24 +45,24 @@ final class SettingsViewController: UIViewController {
     private let heroBadgeLabel: UILabel = {
         let label = UILabel()
         label.text = "Cozy Premium"
-        label.font = .systemFont(ofSize: 13, weight: .semibold)
-        label.textColor = AppAppearance.secondaryText
+        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.textColor = UIColor.white.withAlphaComponent(0.7)
         return label
     }()
 
     private let heroTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "HabitFlow"
-        label.font = .systemFont(ofSize: 28, weight: .bold)
-        label.textColor = AppAppearance.primaryText
+        label.font = .systemFont(ofSize: 26, weight: .bold)
+        label.textColor = .white
         return label
     }()
 
     private let heroSubtitleLabel: UILabel = {
         let label = UILabel()
         label.text = "A warm daily space for habits, focus, and calm progress."
-        label.font = .systemFont(ofSize: 15, weight: .medium)
-        label.textColor = AppAppearance.secondaryText
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textColor = UIColor.white.withAlphaComponent(0.8)
         label.numberOfLines = 0
         return label
     }()
@@ -123,10 +125,10 @@ final class SettingsViewController: UIViewController {
         heroSubtitleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
@@ -134,28 +136,28 @@ final class SettingsViewController: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            titleLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: AppAppearance.screenPadding),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -AppAppearance.screenPadding),
 
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
+            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
             subtitleLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
 
-            cardsStack.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 24),
+            cardsStack.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
             cardsStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             cardsStack.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
-            cardsStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
+            cardsStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
 
             heroBadgeLabel.topAnchor.constraint(equalTo: heroCard.topAnchor, constant: 18),
             heroBadgeLabel.leadingAnchor.constraint(equalTo: heroCard.leadingAnchor, constant: 18),
             heroBadgeLabel.trailingAnchor.constraint(equalTo: heroCard.trailingAnchor, constant: -18),
 
-            heroTitleLabel.topAnchor.constraint(equalTo: heroBadgeLabel.bottomAnchor, constant: 10),
+            heroTitleLabel.topAnchor.constraint(equalTo: heroBadgeLabel.bottomAnchor, constant: 8),
             heroTitleLabel.leadingAnchor.constraint(equalTo: heroBadgeLabel.leadingAnchor),
             heroTitleLabel.trailingAnchor.constraint(equalTo: heroBadgeLabel.trailingAnchor),
 
-            heroSubtitleLabel.topAnchor.constraint(equalTo: heroTitleLabel.bottomAnchor, constant: 10),
+            heroSubtitleLabel.topAnchor.constraint(equalTo: heroTitleLabel.bottomAnchor, constant: 8),
             heroSubtitleLabel.leadingAnchor.constraint(equalTo: heroBadgeLabel.leadingAnchor),
             heroSubtitleLabel.trailingAnchor.constraint(equalTo: heroBadgeLabel.trailingAnchor),
             heroSubtitleLabel.bottomAnchor.constraint(equalTo: heroCard.bottomAnchor, constant: -18)
