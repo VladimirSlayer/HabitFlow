@@ -1,6 +1,7 @@
 import UIKit
 
 final class SettingsViewController: UIViewController {
+    private let settingsStore = SettingsStore()
 
     private let scrollView: UIScrollView = {
         let view = UIScrollView()
@@ -27,26 +28,73 @@ final class SettingsViewController: UIViewController {
         return label
     }()
 
-    private let profileCard = AnalyticsCardView(
-        title: "Profile",
-        value: "HabitFlow",
-        caption: "your calm premium tracker"
+    private let heroCard: UIView = {
+        let view = UIView()
+        view.backgroundColor = AppAppearance.cardSurface
+        view.layer.cornerRadius = AppAppearance.cardCornerRadius
+        view.layer.cornerCurve = .continuous
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = AppAppearance.cardShadowOpacity
+        view.layer.shadowRadius = AppAppearance.cardShadowRadius
+        view.layer.shadowOffset = AppAppearance.cardShadowOffset
+        return view
+    }()
+
+    private let heroBadgeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Cozy Premium"
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
+        label.textColor = AppAppearance.secondaryText
+        return label
+    }()
+
+    private let heroTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "HabitFlow"
+        label.font = .systemFont(ofSize: 28, weight: .bold)
+        label.textColor = AppAppearance.primaryText
+        return label
+    }()
+
+    private let heroSubtitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "A warm daily space for habits, focus, and calm progress."
+        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.textColor = AppAppearance.secondaryText
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private let preferencesSection = SettingsSectionCardView(title: "Preferences")
+    private let appSection = SettingsSectionCardView(title: "App")
+
+    private let remindersRow = SettingsToggleRowView(
+        title: "Daily reminders",
+        subtitle: "Get a gentle nudge to stay consistent."
     )
 
-    private let preferencesCard = AnalyticsCardView(
-        title: "Preferences",
-        value: "Daily reminders",
-        caption: "coming soon"
+    private let soundsRow = SettingsToggleRowView(
+        title: "Cozy sounds",
+        subtitle: "Keep soft feedback for small wins."
     )
 
-    private let aboutCard = AnalyticsCardView(
+    private lazy var appearanceRow = SettingsInfoRowView(
+        title: "Appearance",
+        value: "Cozy Premium"
+    )
+
+    private lazy var versionRow = SettingsInfoRowView(
         title: "Version",
-        value: "1.0",
-        caption: "build foundation is ready"
+        value: settingsStore.appVersion
+    )
+
+    private lazy var buildRow = SettingsInfoRowView(
+        title: "Build",
+        value: settingsStore.buildNumber
     )
 
     private lazy var cardsStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [profileCard, preferencesCard, aboutCard])
+        let stack = UIStackView(arrangedSubviews: [heroCard, preferencesSection, appSection])
         stack.axis = .vertical
         stack.spacing = 16
         return stack
@@ -61,12 +109,18 @@ final class SettingsViewController: UIViewController {
         contentView.addSubview(titleLabel)
         contentView.addSubview(subtitleLabel)
         contentView.addSubview(cardsStack)
+        heroCard.addSubview(heroBadgeLabel)
+        heroCard.addSubview(heroTitleLabel)
+        heroCard.addSubview(heroSubtitleLabel)
 
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         cardsStack.translatesAutoresizingMaskIntoConstraints = false
+        heroBadgeLabel.translatesAutoresizingMaskIntoConstraints = false
+        heroTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        heroSubtitleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -91,7 +145,56 @@ final class SettingsViewController: UIViewController {
             cardsStack.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 24),
             cardsStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             cardsStack.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
-            cardsStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
+            cardsStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
+
+            heroBadgeLabel.topAnchor.constraint(equalTo: heroCard.topAnchor, constant: 18),
+            heroBadgeLabel.leadingAnchor.constraint(equalTo: heroCard.leadingAnchor, constant: 18),
+            heroBadgeLabel.trailingAnchor.constraint(equalTo: heroCard.trailingAnchor, constant: -18),
+
+            heroTitleLabel.topAnchor.constraint(equalTo: heroBadgeLabel.bottomAnchor, constant: 10),
+            heroTitleLabel.leadingAnchor.constraint(equalTo: heroBadgeLabel.leadingAnchor),
+            heroTitleLabel.trailingAnchor.constraint(equalTo: heroBadgeLabel.trailingAnchor),
+
+            heroSubtitleLabel.topAnchor.constraint(equalTo: heroTitleLabel.bottomAnchor, constant: 10),
+            heroSubtitleLabel.leadingAnchor.constraint(equalTo: heroBadgeLabel.leadingAnchor),
+            heroSubtitleLabel.trailingAnchor.constraint(equalTo: heroBadgeLabel.trailingAnchor),
+            heroSubtitleLabel.bottomAnchor.constraint(equalTo: heroCard.bottomAnchor, constant: -18)
         ])
+
+        configureSections()
+        bindRows()
+    }
+
+    private func configureSections() {
+        remindersRow.setOn(settingsStore.dailyRemindersEnabled)
+        soundsRow.setOn(settingsStore.cozySoundsEnabled)
+
+        preferencesSection.contentStack.addArrangedSubview(remindersRow)
+        preferencesSection.contentStack.addArrangedSubview(makeSeparator())
+        preferencesSection.contentStack.addArrangedSubview(soundsRow)
+
+        appSection.contentStack.addArrangedSubview(appearanceRow)
+        appSection.contentStack.addArrangedSubview(makeSeparator())
+        appSection.contentStack.addArrangedSubview(versionRow)
+        appSection.contentStack.addArrangedSubview(makeSeparator())
+        appSection.contentStack.addArrangedSubview(buildRow)
+    }
+
+    private func bindRows() {
+        remindersRow.onValueChanged = { [weak self] isOn in
+            self?.settingsStore.dailyRemindersEnabled = isOn
+        }
+
+        soundsRow.onValueChanged = { [weak self] isOn in
+            self?.settingsStore.cozySoundsEnabled = isOn
+        }
+    }
+
+    private func makeSeparator() -> UIView {
+        let view = UIView()
+        view.backgroundColor = AppAppearance.background
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        return view
     }
 }
