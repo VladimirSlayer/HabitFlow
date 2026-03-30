@@ -16,9 +16,9 @@ final class SettingsSectionCardView: UIView {
         layer.shadowRadius = AppAppearance.cardShadowRadius
         layer.shadowOffset = AppAppearance.cardShadowOffset
 
-        titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 15, weight: .semibold)
-        titleLabel.textColor = AppAppearance.secondaryText
+        titleLabel.text = title.uppercased()
+        titleLabel.font = .systemFont(ofSize: 12, weight: .bold)
+        titleLabel.textColor = AppAppearance.secondaryText.withAlphaComponent(0.7)
 
         contentStack.axis = .vertical
         contentStack.spacing = 0
@@ -30,14 +30,14 @@ final class SettingsSectionCardView: UIView {
         contentStack.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 18),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
 
-            contentStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 14),
-            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18),
-            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
-            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -18)
+            contentStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
 

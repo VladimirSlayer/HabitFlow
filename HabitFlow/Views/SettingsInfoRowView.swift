@@ -8,11 +8,11 @@ final class SettingsInfoRowView: UIView {
         super.init(frame: .zero)
 
         titleLabel.text = title
-        titleLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+        titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         titleLabel.textColor = AppAppearance.primaryText
 
         valueLabel.text = value
-        valueLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        valueLabel.font = .systemFont(ofSize: 15, weight: .medium)
         valueLabel.textColor = AppAppearance.secondaryText
         valueLabel.textAlignment = .right
         valueLabel.numberOfLines = 0
@@ -24,14 +24,14 @@ final class SettingsInfoRowView: UIView {
         valueLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
 
             valueLabel.leadingAnchor.constraint(greaterThanOrEqualTo: titleLabel.trailingAnchor, constant: 12),
-            valueLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            valueLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             valueLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            valueLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12)
+            valueLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
         ])
     }
 

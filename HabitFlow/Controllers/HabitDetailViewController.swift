@@ -28,7 +28,7 @@ final class HabitDetailViewController: UIViewController {
 
     private lazy var backButton: UIButton = {
         let b = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+        let config = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
         b.setImage(UIImage(systemName: "chevron.left", withConfiguration: config), for: .normal)
         b.tintColor = AppAppearance.primaryText
         b.addTarget(self, action: #selector(tapBack), for: .touchUpInside)
@@ -37,7 +37,7 @@ final class HabitDetailViewController: UIViewController {
 
     private let nameLabel: UILabel = {
         let l = UILabel()
-        l.font = .systemFont(ofSize: 28, weight: .bold)
+        l.font = .systemFont(ofSize: 26, weight: .bold)
         l.textColor = AppAppearance.primaryText
         l.numberOfLines = 0
         return l
@@ -45,7 +45,7 @@ final class HabitDetailViewController: UIViewController {
 
     private let subtitleLabel: UILabel = {
         let l = UILabel()
-        l.font = .systemFont(ofSize: 16, weight: .medium)
+        l.font = .systemFont(ofSize: 15, weight: .medium)
         l.textColor = AppAppearance.secondaryText
         l.numberOfLines = 0
         return l
@@ -55,10 +55,10 @@ final class HabitDetailViewController: UIViewController {
 
     private let actionButton: UIButton = {
         let button = UIButton(type: .system)
-        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
-        button.layer.cornerRadius = 18
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        button.layer.cornerRadius = 16
         button.layer.cornerCurve = .continuous
-        button.contentEdgeInsets = UIEdgeInsets(top: 18, left: 20, bottom: 18, right: 20)
+        button.contentEdgeInsets = UIEdgeInsets(top: 16, left: 20, bottom: 16, right: 20)
         return button
     }()
 
@@ -81,23 +81,24 @@ final class HabitDetailViewController: UIViewController {
     private let reflectionTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "Routine note"
-        label.font = .systemFont(ofSize: 15, weight: .semibold)
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
         label.textColor = AppAppearance.secondaryText
         return label
     }()
 
     private let reflectionBodyLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17, weight: .medium)
+        label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = AppAppearance.primaryText
         label.numberOfLines = 0
         return label
     }()
 
-    private lazy var statsStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [todayCard, paceCard, focusCard])
-        stack.axis = .vertical
-        stack.spacing = 16
+    private lazy var statsRow: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [todayCard, paceCard])
+        stack.axis = .horizontal
+        stack.spacing = 12
+        stack.distribution = .fillEqually
         return stack
     }()
 
@@ -112,7 +113,8 @@ final class HabitDetailViewController: UIViewController {
         contentView.addSubview(subtitleLabel)
         contentView.addSubview(previewCard)
         contentView.addSubview(actionButton)
-        contentView.addSubview(statsStack)
+        contentView.addSubview(statsRow)
+        contentView.addSubview(focusCard)
         contentView.addSubview(reflectionCard)
         reflectionCard.addSubview(reflectionTitleLabel)
         reflectionCard.addSubview(reflectionBodyLabel)
@@ -124,16 +126,17 @@ final class HabitDetailViewController: UIViewController {
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         previewCard.translatesAutoresizingMaskIntoConstraints = false
         actionButton.translatesAutoresizingMaskIntoConstraints = false
-        statsStack.translatesAutoresizingMaskIntoConstraints = false
+        statsRow.translatesAutoresizingMaskIntoConstraints = false
+        focusCard.translatesAutoresizingMaskIntoConstraints = false
         reflectionCard.translatesAutoresizingMaskIntoConstraints = false
         reflectionTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         reflectionBodyLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
             contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
@@ -141,42 +144,46 @@ final class HabitDetailViewController: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            backButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            backButton.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 8),
             backButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: AppAppearance.screenPadding - 4),
 
-            nameLabel.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 16),
+            nameLabel.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 14),
             nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: AppAppearance.screenPadding),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -AppAppearance.screenPadding),
 
-            subtitleLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
+            subtitleLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
             subtitleLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
 
-            previewCard.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 20),
+            previewCard.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor, constant: 18),
             previewCard.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             previewCard.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
 
-            actionButton.topAnchor.constraint(equalTo: previewCard.bottomAnchor, constant: 16),
+            actionButton.topAnchor.constraint(equalTo: previewCard.bottomAnchor, constant: 14),
             actionButton.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             actionButton.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
 
-            statsStack.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: 16),
-            statsStack.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
-            statsStack.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
+            statsRow.topAnchor.constraint(equalTo: actionButton.bottomAnchor, constant: 14),
+            statsRow.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
+            statsRow.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
 
-            reflectionCard.topAnchor.constraint(equalTo: statsStack.bottomAnchor, constant: 16),
+            focusCard.topAnchor.constraint(equalTo: statsRow.bottomAnchor, constant: 12),
+            focusCard.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
+            focusCard.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
+
+            reflectionCard.topAnchor.constraint(equalTo: focusCard.bottomAnchor, constant: 12),
             reflectionCard.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             reflectionCard.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
             reflectionCard.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -32),
 
-            reflectionTitleLabel.topAnchor.constraint(equalTo: reflectionCard.topAnchor, constant: 18),
-            reflectionTitleLabel.leadingAnchor.constraint(equalTo: reflectionCard.leadingAnchor, constant: 18),
-            reflectionTitleLabel.trailingAnchor.constraint(equalTo: reflectionCard.trailingAnchor, constant: -18),
+            reflectionTitleLabel.topAnchor.constraint(equalTo: reflectionCard.topAnchor, constant: 16),
+            reflectionTitleLabel.leadingAnchor.constraint(equalTo: reflectionCard.leadingAnchor, constant: 16),
+            reflectionTitleLabel.trailingAnchor.constraint(equalTo: reflectionCard.trailingAnchor, constant: -16),
 
-            reflectionBodyLabel.topAnchor.constraint(equalTo: reflectionTitleLabel.bottomAnchor, constant: 10),
+            reflectionBodyLabel.topAnchor.constraint(equalTo: reflectionTitleLabel.bottomAnchor, constant: 8),
             reflectionBodyLabel.leadingAnchor.constraint(equalTo: reflectionTitleLabel.leadingAnchor),
             reflectionBodyLabel.trailingAnchor.constraint(equalTo: reflectionTitleLabel.trailingAnchor),
-            reflectionBodyLabel.bottomAnchor.constraint(equalTo: reflectionCard.bottomAnchor, constant: -18)
+            reflectionBodyLabel.bottomAnchor.constraint(equalTo: reflectionCard.bottomAnchor, constant: -16)
         ])
 
         actionButton.addTarget(self, action: #selector(toggleCompletion), for: .touchUpInside)

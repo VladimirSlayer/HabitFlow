@@ -17,18 +17,18 @@ final class HabitPreviewCardView: UIView {
         layer.shadowRadius = AppAppearance.cardShadowRadius
         layer.shadowOffset = AppAppearance.cardShadowOffset
 
-        accentBar.layer.cornerRadius = 5
+        accentBar.layer.cornerRadius = 3
         accentBar.layer.cornerCurve = .continuous
 
-        nameLabel.font = .systemFont(ofSize: 20, weight: .semibold)
+        nameLabel.font = .systemFont(ofSize: 18, weight: .semibold)
         nameLabel.textColor = AppAppearance.primaryText
         nameLabel.numberOfLines = 2
 
-        statusLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        statusLabel.font = .systemFont(ofSize: 13, weight: .medium)
         statusLabel.textColor = AppAppearance.secondaryText
 
-        completeButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-        completeButton.layer.cornerRadius = 24
+        completeButton.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14, weight: .bold)), for: .normal)
+        completeButton.layer.cornerRadius = 18
         completeButton.layer.cornerCurve = .continuous
         completeButton.isUserInteractionEnabled = false
 
@@ -43,25 +43,25 @@ final class HabitPreviewCardView: UIView {
         completeButton.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            accentBar.topAnchor.constraint(equalTo: topAnchor, constant: 18),
-            accentBar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18),
-            accentBar.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
-            accentBar.heightAnchor.constraint(equalToConstant: 6),
+            accentBar.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            accentBar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            accentBar.widthAnchor.constraint(equalToConstant: 4),
+            accentBar.heightAnchor.constraint(equalToConstant: 28),
 
-            nameLabel.topAnchor.constraint(equalTo: accentBar.bottomAnchor, constant: 16),
-            nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18),
+            nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            nameLabel.leadingAnchor.constraint(equalTo: accentBar.trailingAnchor, constant: 10),
             nameLabel.trailingAnchor.constraint(equalTo: completeButton.leadingAnchor, constant: -12),
 
-            statusLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
+            statusLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
             statusLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
             statusLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor),
 
+            completeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            completeButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+            completeButton.widthAnchor.constraint(equalToConstant: 36),
+            completeButton.heightAnchor.constraint(equalToConstant: 36),
             completeButton.topAnchor.constraint(greaterThanOrEqualTo: statusLabel.bottomAnchor, constant: 12),
-            completeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -18),
-            completeButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -18),
-            completeButton.widthAnchor.constraint(equalToConstant: 48),
-            completeButton.heightAnchor.constraint(equalToConstant: 48),
-            heightAnchor.constraint(greaterThanOrEqualToConstant: 168)
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 120)
         ])
     }
 
@@ -88,7 +88,7 @@ final class HabitPreviewCardView: UIView {
             completeButton.backgroundColor = AppAppearance.cardSurface
             completeButton.tintColor = accent
             completeButton.layer.borderWidth = 2
-            completeButton.layer.borderColor = accent.withAlphaComponent(0.45).cgColor
+            completeButton.layer.borderColor = accent.withAlphaComponent(0.4).cgColor
         }
     }
 }
