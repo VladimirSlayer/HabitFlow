@@ -3,9 +3,9 @@ import UIKit
 final class HabitsListViewController: UIViewController {
     
     private var habitsMock: [HabitModel] = [
-        HabitModel(id: UUID(), name: "Чтение", colorHex: "#FF9500", completedToday: false),
-        HabitModel(id: UUID(), name: "Тренировка", colorHex: "#34C759", completedToday: true),
-        HabitModel(id: UUID(), name: "Вода", colorHex: "#007AFF", completedToday: false)
+        HabitModel(id: UUID(), name: "Reading", colorHex: "#FF9500", completedToday: false),
+        HabitModel(id: UUID(), name: "Workout", colorHex: "#34C759", completedToday: true),
+        HabitModel(id: UUID(), name: "Water", colorHex: "#007AFF", completedToday: false)
     ]
     
     private let tableView = UITableView()
@@ -13,7 +13,7 @@ final class HabitsListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        title = "Привычки"
+        title = "Habits"
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"),
                                                             style: .plain,
                                                             target: self,
@@ -45,7 +45,6 @@ final class HabitsListViewController: UIViewController {
     }
     
     @objc private func didTapAdd(){
-        print("Tapped add")
         let createHabitVC = CreateHabitViewController()
         createHabitVC.onSave = { [weak self] newHabit in
             self?.habitsMock.append(newHabit)

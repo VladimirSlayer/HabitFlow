@@ -35,7 +35,7 @@ final class HabitTableCellView: UITableViewCell {
         nameLabel.text = habit.name
         statusLabel.text = habit.completedToday == true ? "Done today" : "Not done yet"
         changeCompletionButtonAppearance(habitCompleted: habit.completedToday)
-        colorView.backgroundColor = UIColor(hex: habit.colorHex)
+        colorView.backgroundColor = UIColor(hex: habit.colorHex) ?? .tertiaryLabel
     }
     
     private func changeCompletionButtonAppearance(habitCompleted: Bool) {

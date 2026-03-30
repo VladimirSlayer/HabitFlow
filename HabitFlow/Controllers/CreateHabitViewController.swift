@@ -5,14 +5,14 @@ final class CreateHabitViewController: UIViewController {
     
     private let nameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Название привычки"
+        textField.placeholder = "Habit name"
         textField.borderStyle = .roundedRect
         return textField
     }()
     
     private let completedLabel: UILabel = {
         let completedLabel = UILabel()
-        completedLabel.text = "Выполнено сегодня"
+        completedLabel.text = "Done today"
         completedLabel.textColor = .label
         return completedLabel
     }()
@@ -21,7 +21,7 @@ final class CreateHabitViewController: UIViewController {
     
     private let saveButton: UIButton = {
         let saveButton = UIButton(type: .system)
-        saveButton.setTitle("Сохранить", for: .normal)
+        saveButton.setTitle("Save", for: .normal)
         saveButton.titleLabel?.font = .systemFont(ofSize: 17)
         return saveButton
     }()
