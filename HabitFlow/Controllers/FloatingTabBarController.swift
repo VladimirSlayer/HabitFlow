@@ -1,6 +1,7 @@
 import UIKit
 
 final class FloatingTabBarController: UIViewController {
+    private let store = HabitsStore()
 
     private enum Tab: Int, CaseIterable {
         case habits
@@ -73,8 +74,8 @@ final class FloatingTabBarController: UIViewController {
     private lazy var controllers: [UINavigationController] = {
         let bottomInset: CGFloat = 108
         return [
-            makeNavigationController(rootViewController: HabitsListViewController(), bottomInset: bottomInset),
-            makeNavigationController(rootViewController: AnalyticsViewController(), bottomInset: bottomInset),
+            makeNavigationController(rootViewController: HabitsListViewController(store: store), bottomInset: bottomInset),
+            makeNavigationController(rootViewController: AnalyticsViewController(store: store), bottomInset: bottomInset),
             makeNavigationController(rootViewController: SettingsViewController(), bottomInset: bottomInset)
         ]
     }()
