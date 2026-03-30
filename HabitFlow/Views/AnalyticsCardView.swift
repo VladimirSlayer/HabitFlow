@@ -46,6 +46,11 @@ final class AnalyticsCardView: UIView {
         ])
     }
 
+    func update(value: String, caption: String) {
+        valueLabel.text = value
+        captionLabel.text = caption
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

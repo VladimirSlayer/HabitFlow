@@ -1,12 +1,7 @@
 import UIKit
 
 final class HabitsListViewController: UIViewController {
-
-    private var habitsMock: [HabitModel] = [
-        HabitModel(id: UUID(), name: "Reading", colorHex: "#FF9500", completedToday: false),
-        HabitModel(id: UUID(), name: "Workout", colorHex: "#34C759", completedToday: true),
-        HabitModel(id: UUID(), name: "Water", colorHex: "#007AFF", completedToday: false)
-    ]
+    private let store: HabitsStore
 
     private let scrollView: UIScrollView = {
         let s = UIScrollView()
@@ -54,6 +49,15 @@ final class HabitsListViewController: UIViewController {
     }()
 
     private var collectionHeightConstraint: NSLayoutConstraint?
+
+    init(store: HabitsStore) {
+        self.store = store
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -144,7 +148,7 @@ final class HabitsListViewController: UIViewController {
     @objc private func didTapAdd() {
         let createHabitVC = CreateHabitViewController()
         createHabitVC.onSave = { [weak self] newHabit in
-            self?.habitsMock.append(newHabit)
+            self?.store.addHabit(newHabit)
             self?.collectionView.reloadData()
             self?.syncCollectionHeight()
         }
@@ -154,15 +158,15 @@ final class HabitsListViewController: UIViewController {
 
 extension HabitsListViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        habitsMock.count
+        store.habits.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HabitStickerCell.reuseIdentifier, for: indexPath) as! HabitStickerCell
-        let habit = habitsMock[indexPath.item]
+        let habit = store.habits[indexPath.item]
         cell.configure(with: habit)
         cell.onTapComplete = { [weak self] in
-            self?.habitsMock[indexPath.item].completedToday.toggle()
+            self?.store.toggleHabitCompletion(id: habit.id)
             self?.collectionView.reloadItems(at: [indexPath])
             self?.syncCollectionHeight()
         }
@@ -170,7 +174,7 @@ extension HabitsListViewController: UICollectionViewDataSource, UICollectionView
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let habit = habitsMock[indexPath.item]
+        let habit = store.habits[indexPath.item]
         let habitVC = HabitDetailViewController(selectedHabit: habit)
         navigationController?.pushViewController(habitVC, animated: true)
     }
